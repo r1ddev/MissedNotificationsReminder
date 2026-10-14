@@ -2,6 +2,9 @@ name: Build APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - ci/single-modern-apk-build
 
 permissions:
   contents: write
@@ -52,22 +55,21 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x gradlew
 
-      - name: Build debug APKs
-        run: |
-          ./gradlew \
-            assembleAccessibilityV14NoProprietaryDebug \
-            assembleAccessibilityV14ProprietaryDebug \
-            assembleAccessibilityV27NoProprietaryDebug \
-            assembleAccessibilityV27ProprietaryDebug \
-            assembleNotificationListenerV18NoProprietaryDebug \
-            assembleNotificationListenerV18ProprietaryDebug \
-            --stacktrace
+      - name: Build APK
+        run: ./gradlew assembleNotificationListenerV18NoProprietaryDebug --stacktrace
 
-      - name: Upload debug APKs
+      - name: Prepare APK
+        run: |
+          mapfile -t APK_FILES < <(find app/build/outputs/apk/notificationListenerV18NoProprietary/debug -maxdepth 1 -type f -name '*.apk' -print | sort)
+          test "${#APK_FILES[@]}" -eq 1
+          mkdir -p dist
+          cp "${APK_FILES[0]}" dist/MissedNotificationsReminder.apk
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apks
-          path: app/build/outputs/apk/**/*.apk
+          name: MissedNotificationsReminder
+          path: dist/MissedNotificationsReminder.apk
           if-no-files-found: error
 
       - name: Publish GitHub Release
@@ -75,15 +77,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mapfile -t APK_FILES < <(find app/build/outputs/apk -type f -name '*.apk' -print | sort)
+          APK="dist/MissedNotificationsReminder.apk"
           TAG="debug-${GITHUB_RUN_NUMBER}"
           TITLE="Debug build #${GITHUB_RUN_NUMBER}"
 
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "${APK_FILES[@]}" --clobber
+            gh release upload "$TAG" "$APK" --clobber
           else
-            gh release create "$TAG" "${APK_FILES[@]}" \
+            gh release create "$TAG" "$APK" \
               --target "$GITHUB_SHA" \
               --title "$TITLE" \
-              --notes "Debug APKs built from commit $GITHUB_SHA."
+              --notes "Android 4.3+ debug build from commit $GITHUB_SHA."
           fi
