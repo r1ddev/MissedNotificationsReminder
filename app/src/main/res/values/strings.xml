@@ -70,6 +70,9 @@
     <!-- Sound -->
     <string name="sound_reminder_ringtone_button">Reminder Ringtone</string>
     <string name="sound_select_ringtone_dialog_title">Select Ringtone</string>
+    <string name="sound_playback_mode_title">Reminder playback</string>
+    <string name="sound_playback_mode_normal">Normal</string>
+    <string name="sound_playback_mode_alarm">Alarm</string>
 
     <!-- Vibration -->
     <string name="vibration_disabled">Disabled</string>
@@ -110,7 +113,7 @@
     <string name="payment_error_billing_unavailable">Billing unavailable</string>
     <string name="payment_error_service_unavailable">Service unavailable</string>
     <string name="payment_error_user_canceled">Purchase canceled</string>
-    <string name="payment_error_purchase_pending">The purchase is pending!</string>
+    <string name="payment_error_purchase_pending">Purchase pending!</string>
     <string name="contribution_title">Support development</string>
     <string name="contribution_contribute_options"><![CDATA[
     You may contribute either via creating an issue or pull request in the project
