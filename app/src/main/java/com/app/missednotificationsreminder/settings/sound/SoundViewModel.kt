@@ -11,6 +11,7 @@ import com.app.missednotificationsreminder.binding.model.BaseViewStateModel
 import com.app.missednotificationsreminder.binding.util.bindWithPreferences
 import com.app.missednotificationsreminder.di.qualifiers.ForApplication
 import com.app.missednotificationsreminder.settings.di.qualifiers.ReminderRingtone
+import com.app.missednotificationsreminder.settings.di.qualifiers.RespectRingerMode
 import com.tfcporciuncula.flow.Preference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -28,10 +29,12 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class SoundViewModel @Inject constructor(
         @param:ReminderRingtone private val ringtone: Preference<String>,
+        @param:RespectRingerMode private val respectRingerMode: Preference<Boolean>,
         @param:ForApplication private val context: Context) :
         BaseViewStateModel<SoundViewState, SoundViewStatePartialChanges>(SoundViewState(
                 ringtone = "",
-                ringtoneName = "")) {
+                ringtoneName = "",
+                useAlarmVolume = false)) {
 
 
     init {
@@ -43,6 +46,13 @@ class SoundViewModel @Inject constructor(
                             vs.copy(ringtone = newValue)
                         },
                         { it.ringtone })
+            }
+            launch {
+                _viewState.bindWithPreferences(respectRingerMode,
+                        { newValue, vs ->
+                            vs.copy(useAlarmVolume = !newValue)
+                        },
+                        { !it.useAlarmVolume })
             }
         }
         viewState
