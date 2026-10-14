@@ -2,6 +2,9 @@ name: Build APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - ci/github-actions-apk
 
 jobs:
   build:
@@ -11,16 +14,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java 8
+      - name: Set up Java 17 for Android SDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '8'
+          java-version: '17'
 
       - name: Install Android SDK 29
         run: |
           yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
           ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platforms;android-29" "build-tools;29.0.2"
+
+      - name: Set up Java 8 for Gradle
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
 
       - name: Create CI signing keystore
         run: |
