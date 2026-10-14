@@ -6,9 +6,14 @@ import org.junit.Test
 class SoundViewStateTest {
 
     @Test
-    fun `sound settings expose alarm reminder mode`() {
-        val fieldNames = SoundViewState::class.java.declaredFields.map { it.name }
+    fun `alarm playback change updates sound state`() {
+        val initial = SoundViewState(
+                ringtone = "",
+                ringtoneName = "",
+                useAlarmVolume = false)
 
-        assertThat(fieldNames).contains("useAlarmVolume")
+        val updated = SoundViewStatePartialChanges.AlarmVolumeChange(true).reduce(initial)
+
+        assertThat(updated.useAlarmVolume).isTrue()
     }
 }
