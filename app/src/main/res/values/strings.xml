@@ -113,7 +113,7 @@
     <string name="payment_error_billing_unavailable">Billing unavailable</string>
     <string name="payment_error_service_unavailable">Service unavailable</string>
     <string name="payment_error_user_canceled">Purchase canceled</string>
-    <string name="payment_error_purchase_pending">Purchase pending!</string>
+    <string name="payment_error_purchase_pending">The purchase is pending!</string>
     <string name="contribution_title">Support development</string>
     <string name="contribution_contribute_options"><![CDATA[
     You may contribute either via creating an issue or pull request in the project
