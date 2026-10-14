@@ -16,4 +16,10 @@ sealed class SoundViewStatePartialChanges : ViewStatePartialChanges<SoundViewSta
             return previousState.copy(ringtoneName = newValue)
         }
     }
+
+    data class AlarmVolumeChange(private val newValue: Boolean) : SoundViewStatePartialChanges() {
+        override fun reduce(previousState: SoundViewState): SoundViewState {
+            return previousState.copy(useAlarmVolume = newValue)
+        }
+    }
 }
