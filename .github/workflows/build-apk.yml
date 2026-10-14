@@ -75,15 +75,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mapfile -t APK_FILES < <(find app/build/outputs/apk -type f -name '*.apk' -print | sort)
+          APK_FILE="app/build/outputs/apk/notificationListenerV18NoProprietary/debug/MissedNotificationsReminder-notificationListener-v18-noProprietary-debug.apk"
+          test -f "$APK_FILE"
+
           TAG="debug-${GITHUB_RUN_NUMBER}"
           TITLE="Debug build #${GITHUB_RUN_NUMBER}"
 
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "${APK_FILES[@]}" --clobber
+            while IFS= read -r ASSET; do
+              if [ "$ASSET" != "$(basename "$APK_FILE")" ]; then
+                gh release delete-asset "$TAG" "$ASSET" --yes
+              fi
+            done < <(gh release view "$TAG" --json assets --jq '.assets[].name')
+            gh release upload "$TAG" "$APK_FILE" --clobber
           else
-            gh release create "$TAG" "${APK_FILES[@]}" \
+            gh release create "$TAG" "$APK_FILE" \
               --target "$GITHUB_SHA" \
               --title "$TITLE" \
-              --notes "Debug APKs built from commit $GITHUB_SHA."
+              --notes "Debug APK built from commit $GITHUB_SHA."
           fi
