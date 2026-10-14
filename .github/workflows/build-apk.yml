@@ -53,7 +53,15 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APKs
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          ./gradlew \
+            assembleAccessibilityV14NoProprietaryDebug \
+            assembleAccessibilityV14ProprietaryDebug \
+            assembleAccessibilityV27NoProprietaryDebug \
+            assembleAccessibilityV27ProprietaryDebug \
+            assembleNotificationListenerV18NoProprietaryDebug \
+            assembleNotificationListenerV18ProprietaryDebug \
+            --stacktrace
 
       - name: Upload debug APKs
         uses: actions/upload-artifact@v4
