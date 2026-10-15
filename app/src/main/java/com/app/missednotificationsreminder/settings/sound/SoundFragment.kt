@@ -68,6 +68,10 @@ class SoundFragment : CommonFragmentWithViewBinding<FragmentSoundBinding>(
         selectRingtone.launch(viewModel.viewState.value.ringtone)
     }
 
+    fun onAlarmVolumeChanged(checked: Boolean) {
+        viewModel.process(SoundViewStatePartialChanges.AlarmVolumeChange(checked))
+    }
+
     class PickRingtoneContract : ActivityResultContract<String?, Uri?>() {
 
         override fun createIntent(context: Context, input: String?): Intent {

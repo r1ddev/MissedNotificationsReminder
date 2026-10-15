@@ -37,17 +37,12 @@ jobs:
           distribution: temurin
           java-version: '8'
 
-      - name: Create CI signing keystore
+      - name: Restore stable CI signing keystore
         run: |
-          keytool -genkeypair \
-            -keystore ci-debug.keystore \
-            -storepass android \
-            -alias androiddebugkey \
-            -keypass android \
-            -dname "CN=Android Debug,O=Android,C=US" \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000
+          curl -fsSL \
+            "https://raw.githubusercontent.com/expo/expo/bdcd7c24c7be10f41c9f74bf1969bb0aa5a83e91/templates/expo-template-bare-minimum/android/app/debug.keystore" \
+            -o ci-debug.keystore
+          test "$(git hash-object ci-debug.keystore)" = "364e105ed39fbfd62001429a68140672b06ec0de"
           cat > keystore.properties <<'EOF'
           storeFile=ci-debug.keystore
           storePassword=android
